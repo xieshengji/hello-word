@@ -1,33 +1,33 @@
 #include<stdio.h>
 #include<iostream>
 using namespace std;
-typedef char Elemtype;//顺序栈实验任务
+typedef char Elemtype;//链栈实验任务
+typedef struct isnode
+{
+	Elemtype data;
+	struct isnode *next;
+}node;
 class stack
 {
 public:
-	char date[100];
-	int top;
+
 	stack();
 	bool empty();
-	bool full();
 	bool gettop(Elemtype &x);
 	bool push(Elemtype x);
 	bool pop();
+	void destory();
+	node* top;
+	int count;
 };
 stack::stack()
 {
-	top = -1;
+	top = NULL;
+	count = 0;
 }
 bool stack::empty()
 {
-	if (top == -1)
-		return 1;
-	else
-		return 0;
-}
-bool stack::full()
-{
-	if (top == 20 - 1)
+	if (top == NULL)
 		return 1;
 	else
 		return 0;
@@ -38,29 +38,41 @@ bool stack::gettop(Elemtype &x)
 		return 0;
 	else
 	{
-		x = date[top];
+		x = top->data;
 		return 1;
 	}
 }
 bool stack::push(Elemtype x)
 {
-	if (full())
-		return 0;
-	else
-	{
-		top++;
-		date[top] = x;
-		return 1;
-	}
+	node *s;
+	s = new node;
+	s->data = x;
+	s->next = top;
+	top = s;
+	count++;
+	return 1;
 }
 bool stack::pop()
 {
+	node* u = top;
 	if (empty())
 		return 0;
 	else
 	{
-		top--;
+		top = top->next;
+		delete u;
+		count--;
 		return 1;
+	}
+}
+void stack::destory()
+{
+	node *u;
+	while (top)
+	{
+		u = top;
+		top = top->next;
+		delete u;
 	}
 }
 void change(int i)
@@ -69,75 +81,74 @@ void change(int i)
 
 	while (i)
 	{
-		   int a = i % 16;
-			switch (a)
-			{
-			case 0:
-				A.push('0');
-				break;
-			case 1:
-				A.push('1');
-				break;
-			case 2:
-				A.push('2');
-				break;
-			case 3:
-				A.push('3');
-				break;
-			case 4:
-				A.push('4');
-				break;
-			case 5:
-				A.push('5');
-				break;
-			case 6:
-				A.push('6');
-				break;
-			case 7:
-				A.push('7');
-				break;
-			case 8:
-				A.push('8');
-				break;
-			case 9:
-				A.push('9');
-				break;
-			case 10:
-				A.push('A');
-				break;
-			case 11:
-				A.push('B');
-				break;
-			case 12:
-				A.push('C');
-				break;
-			case 13:
-				A.push('D');
-				break;
-			case 14:
-				A.push('E');
-				break;
-			case 15:
-				A.push('F');
-				break;
+		int a = i % 16;
+		switch (a)
+		{
+		case 0:
+			A.push('0');
+			break;
+		case 1:
+			A.push('1');
+			break;
+		case 2:
+			A.push('2');
+			break;
+		case 3:
+			A.push('3');
+			break;
+		case 4:
+			A.push('4');
+			break;
+		case 5:
+			A.push('5');
+			break;
+		case 6:
+			A.push('6');
+			break;
+		case 7:
+			A.push('7');
+			break;
+		case 8:
+			A.push('8');
+			break;
+		case 9:
+			A.push('9');
+			break;
+		case 10:
+			A.push('A');
+			break;
+		case 11:
+			A.push('B');
+			break;
+		case 12:
+			A.push('C');
+			break;
+		case 13:
+			A.push('D');
+			break;
+		case 14:
+			A.push('E');
+			break;
+		case 15:
+			A.push('F');
+			break;
 
-			}
-			i /= 16;
-		
+		}
+		i /= 16;
+
 	}
 
 	while (!A.empty())
 	{
-		cout << A.date[A.top];
+		cout << A.top->data;
 		A.pop();
-    }
-}
-	int main()
-	{
-		int n;
-		cout << "请输入一个十进制数"<<endl;
-		cin >> n;
-		cout << "转化为16进制为:" << endl;
-		change(n);
-
 	}
+}
+int main()
+{
+	int n;
+	cout << "请输入一个十进制数" << endl;
+	cin >> n;
+	cout << "转化为16进制为:" << endl;
+	change(n);
+}
