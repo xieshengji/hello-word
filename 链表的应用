@@ -1,0 +1,188 @@
+#include<stdio.h>
+#include<iostream>
+using namespace std;
+typedef int Elemtype;
+typedef struct node
+{
+	Elemtype date;
+	node * next;
+}node;
+class Linklist
+{
+public:
+	Linklist();
+	int getlenth();
+	int getElemtype(int i, Elemtype &x);
+	node * locate(Elemtype x);
+	bool listinsert(int i, Elemtype x);
+	bool listdelete(int i);
+	void destory();
+	void incListinsert(Elemtype x);
+	node * head;
+
+};
+
+Linklist::Linklist()
+{
+	
+	head = new node;
+	head->next = NULL;
+}
+int Linklist::getlenth()
+{
+	node * p=head->next;
+	int i = 0;
+	
+	while (p != NULL)
+	{
+		i++;
+		p = p->next;
+	}
+	return i;
+}
+
+int Linklist::getElemtype(int i, Elemtype &x)
+{
+	int j = 1;
+	node *p = head->next;
+	while (p != NULL && j != i)
+	{
+		j++;
+		p = p->next;
+	}
+	if (p == NULL)
+		return 0;
+	x = p->date;
+	return x;
+}
+node* Linklist::locate(Elemtype x)
+{
+	node *p = head->next;
+	while (p != NULL)
+	{
+		if (p->date == x)
+			return p;
+		else
+			p = p->next;
+	}
+	return NULL;//查找失败
+}
+bool Linklist::listinsert(int i, Elemtype x)
+{
+	node*p = head;
+	node*s;
+	int k = 0;
+	while (k != i - 1 && p != NULL)
+	{
+		p = p->next;
+		k++;
+	}
+	if (p == NULL)
+		return 0;
+	else
+	{
+		s = new node;
+		s->date = x;
+		s->next = p->next;
+		p->next = s;
+		return 1;
+	}
+}
+bool Linklist::listdelete(int i)
+{
+	node*p = head;
+	node*u;
+	int k = 0;
+	while (k != i - 1 && p != NULL)
+	{
+		p = p->next;
+		k++;
+	}
+	if (p == NULL || p->next == NULL)
+		return 0;
+	else
+	{
+		u = p->next;
+		p->next = u->next;//p=p->next->next;
+		delete u;
+		return 1;
+	}
+}
+void Linklist::incListinsert(Elemtype x)
+{
+	node *u;
+	node *p = head;
+	while (p->next != NULL && p->next->date < x)
+	{
+		p = p->next;
+	}
+	if (p->next != NULL && p->next->date > x)
+	{
+		u = new node;
+		u->next = p->next;
+		p->next = u;
+	}
+}
+void judge(	Linklist &A,Linklist &B,Linklist &C)
+{
+	node *pa;
+	node *pb;
+	node *pc;
+	node *u;
+	pc=C.head;
+	pa=A.head->next;
+	pb=B.head->next;
+	while(pb!=NULL&&pa!=NULL)
+	{
+		if(pa->date<pb->date)
+		{
+			pa=pa->next;
+		}
+		else if(pa->date>pb->date)
+		{
+			pb=pb->next;
+		}
+		else if(pa->date==pb->date)
+		{
+			node *u;
+			u->date=pa->date;
+			pc->next=u;
+			pa=pa->next;
+			pb=pb->next;
+			cout<<u->date;
+		}	
+	}
+	pc->next=NULL;
+	
+}
+void nizhi(Linklist &A,Linklist &B)
+{
+	node *p=B.head;
+	node *q=A.head->next;
+	node *u;
+while(q)
+	{
+		u=new node;
+		u->date=q->date;
+		u->next=p->next;
+		p->next=u;
+		q=q->next;
+	}
+}
+int main()
+{
+	Linklist A;Linklist B;int c;
+	for(int i=0;i<5;i++)
+	{
+		A.listinsert(i+1,i);
+		cout<<A.getElemtype(i+1,c);
+	}
+	cout<<"将A逆置后"<<endl;
+	nizhi(A,B);
+	for(int j=0;j<5;j++)
+	{
+		cout<<B.getElemtype(j+1,c);
+	 } 
+
+	 
+}
