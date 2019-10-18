@@ -1,0 +1,122 @@
+#include<stdio.h>
+#include<iostream>
+using namespace std;
+typedef  int ElemType;
+class  LIST//顺序表 
+{
+public:
+	ElemType date[20];
+	int lenth;
+	int getlenth();
+	int getElemebt(int i, ElemType *x);
+	int listlocate(ElemType x);
+	void listinsert(ElemType x, int i);
+	void listdelete(int i);
+};
+int LIST::getlenth()
+{
+	return lenth;
+}
+int LIST::getElemebt(int i, ElemType *x)
+{
+	if (i<1 || i>lenth)
+		cout << "超出范围";
+	else
+		* x = date[i - 1];
+	return *x;
+
+}
+int LIST::listlocate(ElemType x)
+{
+	for (int i = 0; i < lenth; i++)
+		if (date[i] == x)
+			return i + 1;//第i+1个元素
+}
+
+void LIST::listinsert(ElemType x, int i)
+{
+	int j;
+	if (lenth == 20)
+		cout << "满了";
+	else if (i<1 || i>lenth + 1)
+		cout << "超出范围";
+	else
+	{
+		for (j = lenth - 1; j >= i - 1; j--)
+			date[j + 1] = date[j];
+		date[i - 1] = x;
+		lenth++;
+	}
+
+}
+void LIST::listdelete(int i)
+{
+	int j;
+	if (lenth <= 0)
+		cout << "下溢出错";
+	else if (i<1 || i>lenth + 1)
+		cout << "超出范围";
+	else
+	{
+		for (j = i; j <= lenth; j++)
+			date[j - 1] = date[j];
+		lenth--;
+	}
+}
+void deletechong(LIST &B)
+{   
+    int a=0;
+	for(int i=0;i<B.lenth-1;i++)
+	{
+		for( a=0;a<B.lenth-1;a++)
+		{
+			if(B.date[i]==B.date[a]&&a!=i)
+			B.listdelete(i+1);
+		}
+		
+	}
+	
+}
+void add(LIST &B,ElemType x)
+{
+int i=B.lenth-1;
+if(B.lenth==20)
+cout<<"满了插不进去";
+else
+{
+	while(i>=0&&B.date[i]>x)
+	{
+		B.date[i+1]=B.date[i];
+		i--;
+	}
+ } 
+ B.date[i+1]=x;
+ B.lenth++;
+}
+int main()
+{
+	LIST A; int c;int n;
+	for (int i = 0; i < 10; i++)
+	{
+	
+		A.listinsert(i, i + 1);//插入元素
+        cout<<A.date[i]<<endl;
+	}
+	cout<<"请输入要插入的数";
+	cin>>n;
+	add(A,n);
+    for (int i = 0; i < 11; i++)
+	{
+        cout<<A.date[i]<<endl;
+	}
+	cout<<"删除重复的元素后"<<endl; 
+	deletechong(A);
+
+	    for (int i = 0; i < 10; i++)
+	{
+        cout<<A.date[i]<<endl;
+	}
+	
+	 
+	
+}
