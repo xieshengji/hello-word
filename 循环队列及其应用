@@ -1,0 +1,128 @@
+#include<stdio.h>
+#include<iostream>
+using namespace std;
+typedef int elemtype;
+class queue
+{
+public:
+	queue();
+	bool empty();
+	bool full();
+	bool getFront(elemtype &x);
+	bool enqueue(elemtype x);
+	bool outqueue();
+	elemtype date[100];
+	int front;//队头
+	int rear;//队尾
+};
+queue::queue()
+{
+	front = 0;
+	rear = 0;
+}
+bool queue::empty()
+{
+	if (front == rear)
+		return 1;
+	else
+		return 0;
+}
+bool queue::full()
+{
+	if ((rear + 1) % 100 == front)
+		return 1;
+	else
+		return 0;
+}
+bool queue::getFront(elemtype &x)
+{
+	if (rear == front)
+		return 0;//队空
+	else
+	{
+		x = date[(front + 1) % 100];//front的下一个才是队头元素,所以+1
+		return 1;
+	}
+}
+bool queue::enqueue(elemtype x)
+{
+	if (full())
+		return 0;
+	else
+	{
+		rear = (rear + 1) % 100;
+		date[rear] = x;
+		return 1;
+	}
+}
+bool queue::outqueue()
+{
+	if (empty())
+		return 0;
+	else
+		front = (front + 1) % 100;
+	return 1;//队头指针后移 元素并未真正删除
+}
+int getnumber(queue A)
+{
+	int n = 0;
+	while (A.front !=A.rear)
+	{
+		A.front++;
+		n++;
+	}
+	return n;
+}
+void inint(queue &A)
+{
+	A.front = 0;
+	A.rear = 0;
+}
+void judge(queue &A)
+{
+	cout << "请输入一个数字"<<endl;
+	int n;
+	cin >> n;
+	int c = n % 2;
+	if (c == 0 && n != 0)
+		A.outqueue();
+	else if (n == 0)
+		cout << "无效,算法退出" << endl;
+	else 
+		A.enqueue(n);
+}
+void output(queue A)
+{
+	while (A.front != A.rear)
+	{
+		cout << A.date[A.rear]<<endl;
+		A.rear--;
+	}
+
+}
+int main()
+{
+	queue A; queue B;
+	int a;
+	for (int i = 0; i < 10; i++)
+		A.enqueue(i);
+	cout << "判断队满" << endl;
+	cout<<A.full()<<endl;
+	for (int i = 1; i <= 99; i++)
+		B.enqueue(i);
+	cout << "依次输入1-99判断队满" << endl;
+	cout << B.full() << endl;
+	cout << "队头元素为:";
+	cout << B.getFront(a)<<endl;
+	cout << "队列元素个数为:";
+	cout << getnumber(B)<<endl;
+	inint(B);//初始化
+	cout << "初始化后队列元素个数为:";
+	cout << getnumber(B) << endl;
+	judge(B);
+	cout << "队列元素个数为:";
+	cout << getnumber(B) << endl;
+	cout << "当前队列的所有元素为";
+	output(B);
+
+}
