@@ -20,13 +20,13 @@ public:
 };
 queue::queue()
 {
-	front = new node;
+	
 	rear = front;
-	front->next = NULL;
+	front = NULL;
 }
 bool queue::empty()
 {
-	if (front == rear)
+	if (front == NULL)
 		return 1;
 	else
 		return 0;
@@ -37,7 +37,7 @@ bool queue::getFront(elemtype &x)
 		return 0;//队空
 	else
 	{
-		x = (front->next)->date;//front的下一个才是队头元素
+		x = (front)->date;//front的下一个才是队头元素
 		return 1;
 	}
 }
@@ -46,8 +46,15 @@ bool queue::enqueue(elemtype x)
 	node *p = new node;
 	p->date = x;
 	p->next = NULL;
-	rear->next = p;
-	rear = p;
+	if (empty())
+	{
+		front = rear = p;
+	}
+	else
+	{
+		rear->next = p;
+		rear = p;
+	}
 		return 1;
 	
 }
@@ -58,10 +65,10 @@ bool queue::outqueue()
 		return 0;
 	else
 	{
-		u = front->next;
-		front->next = u->next;
+		u = front;
+		front= u;
 		delete u;
-		if (front->next == NULL)
+		if (front == NULL)
 		{
 			rear = front;
 		}
@@ -71,7 +78,7 @@ bool queue::outqueue()
 int getnumber(queue A)
 {
 	int n = 0;
-	while (A.front !=A.rear)
+	while (A.front !=NULL)
 	{
 		A.front=A.front->next;
 		n++;
@@ -80,9 +87,8 @@ int getnumber(queue A)
 }
 void inint(queue &A)
 {
-	A.front = new node;
 	A.rear = A.front;
-	A.front->next = NULL;
+	A.front = NULL;
 }
 void judge(queue &A)
 {
@@ -101,7 +107,7 @@ void output(queue A)
 {
 	while (A.front !=NULL)
 	{
-		cout << A.front->next->date<<endl;
+		cout << A.front->date<<endl;
 		A.front=A.front->next;
 	}
 
