@@ -1,0 +1,400 @@
+BiTree.h
+#pragma once
+#include<iostream>
+#include<stdio.h>
+using namespace std;
+typedef char elemtype;
+
+typedef struct blnode
+{
+	elemtype date;
+	blnode *ichild, *rchild;
+}node;
+class BiTree
+{
+public:
+	BiTree();
+	void initTree(node *&T );
+	void PreOrder(node *T);//先序遍历
+	void InOrder(node *T);
+	void PostOrder(node *T);
+	bool empty(node *T);//判断是否为空二叉树
+	int heith(node *T);
+	void ceng(node *T,int i);
+	int nodenumber(node *T);
+	int leafnumber(node *T);
+	int deg2(node *T);
+	void swapLR(node *T);
+	bool searchfather(node *T, char x);
+	void search(node*T, char X,int num);
+	node *root;//根节点指针	
+
+};
+
+
+
+
+
+
+BiTree.cpp
+#include "BiTree.h"
+extern int flag1 = 0, flag2 = 0, flag3 = 0, flag4 = 0, flag5 = 0, flag6 = 0;
+int a = 0;
+int b = 0;
+int c = 0;
+BiTree::BiTree()
+{
+	initTree(root);
+}
+bool BiTree::empty(node *T)
+{
+	if (T == NULL)
+		return 1;
+	else
+		return 0;
+}
+void BiTree::PreOrder(node *T)
+{
+
+	if (T!=NULL)
+	{
+		a++;
+		cout << T->date  << " ";
+		PreOrder(T->ichild);
+		PreOrder(T->rchild);
+	}
+}
+void BiTree::PostOrder(node *T)
+{
+	if (T!=NULL)
+	{
+		
+		PreOrder(T->ichild);
+		PreOrder(T->rchild);
+		b++;
+		cout << T->date  << " " ;
+	}
+}
+void BiTree::InOrder(node* T)
+{
+	if (T!=NULL)
+	{
+
+		PreOrder(T->ichild);
+		c++;
+		cout << T->date << " " ;
+		PreOrder(T->rchild);
+
+	}
+}
+void BiTree::initTree(node *& T)
+{
+	char n;
+	cin >> n;
+	if (n == '/')
+		T = NULL;
+	else
+	{
+		T = new node;
+		T->date = n;
+		initTree((*&T)->ichild);
+		initTree((*&T)->rchild);
+	}
+}
+int max(int a, int b)
+{
+	if (a > b)
+		return a;
+	else
+		return b;
+}
+int BiTree::heith(node *T)
+{
+	if (T == NULL)
+		return 0;
+	else
+		return max(heith(T->ichild), heith(T->rchild)) + 1;
+}
+void BiTree::ceng(node*T,int i)
+{
+	if (T != NULL)
+	{
+		ceng(T->ichild, i + 1);
+		cout << T->date << "层数为:" << i << " ";
+		ceng(T->rchild,i+1);
+	}
+}
+int BiTree::nodenumber(node *T)
+{
+	if (T == NULL)
+		return 0;
+	else
+		return(nodenumber(T->ichild) + nodenumber(T->rchild) + 1);
+}
+int BiTree::leafnumber(node *T)
+{
+	if (T == NULL )
+		return 0;
+	if (T->ichild == NULL && T->rchild == NULL)
+		return 1;
+	else
+		return (leafnumber(T->ichild) + leafnumber(T->rchild));
+}
+int BiTree::deg2(node *T)
+{
+	if (T == NULL)
+		return 0;
+	if (T->ichild != NULL && T->rchild != NULL)
+		return 1;
+	else
+		return(deg2(T->ichild) + deg2(T->rchild));
+}
+bool BiTree::searchfather(node *T, char x)
+{
+		if (T == NULL)
+			return false;
+		else 
+		{
+			if (T->ichild != NULL)
+			{
+				if (T->ichild->date == x)
+				{
+					{cout << "父节点的值为" << T->date << " "; flag2 = 1; }
+					if (T->rchild != NULL)
+					{
+						cout << "右兄弟结点值为" << T->rchild->date << " "; flag4 = 1;
+					}
+				}
+			}
+			else if (T->rchild != NULL)
+
+			{
+				if (T->rchild->date == x)
+				{
+					{cout << "父节点的值为" << T->date << " "; flag2 = 1; }
+					if (T->ichild != NULL)
+					{
+						cout << "左兄弟结点值为" << T->ichild->date << " "; flag3 = 1;
+					}
+				}
+			}
+			if (T->date == x)
+			{
+				flag1 = 1;
+				if (T->ichild != NULL)
+				{
+					cout << "左孩子节点值为" << T->ichild->date << " "; flag5 = 1;
+				}
+				else if (T->rchild != NULL)
+				{
+					cout << "右孩子节点值为" << T->rchild->date << " "; flag6 = 1;
+				}
+			}
+		}
+		searchfather(T->ichild, x);
+		searchfather(T->rchild, x);
+}
+void BiTree::swapLR(node *T)
+{
+	if (T != NULL)
+	{
+		swapLR(T->ichild);
+		swapLR(T->rchild);
+		node *t;
+		t = T->ichild;
+		T->ichild = T->rchild;
+		T->rchild = t;
+	}
+}
+void BiTree::search(node*T, char X,int num)
+{
+
+	if (T != NULL)
+	{
+		search(T->ichild, X, num + 1);
+		if (T->date == X)
+			cout << X << "所在的层数为" << num << endl;
+		search(T->rchild, X, num + 1);
+	}
+}
+
+
+
+
+main.cpp
+#include<stdio.h>
+#include<iostream>
+#include"BiTree.h"
+using namespace std;
+#define MAXLEN 100
+extern int flag1,flag2,flag3,flag4,flag5,flag6;
+typedef  int ElemType;
+class SeqList
+{
+public:
+	SeqList();//初始化
+
+	int listLength();//获取长度
+	void getElement(int i, char &x);//按序号求元素
+	int Locate(int x);//按值查找元素所在位置
+	bool Insert(int i, char x);//在i位置插入元素
+	bool Delete(int i);//删除第i个元素
+	bool Empty();//判空
+	bool Full();//判满
+	int data[MAXLEN];
+	int listLen;
+};
+SeqList::SeqList()
+{
+	listLen = 0;
+}
+bool SeqList::Empty()
+{
+	if (listLen == 0)
+		return true;
+	else
+		return false;
+}
+bool SeqList::Full()
+{
+	if (listLen == MAXLEN)
+		return true;
+	else
+		return false;
+}
+int SeqList::listLength()
+{
+	return listLen;
+}
+void SeqList::getElement(int i, char &x)
+{
+	if (Empty())
+		cout << "顺序表为空，获取元素失败！" << endl;
+	else if (i >= 1 && i <= listLen)
+	{
+		for (int j = 0; j < listLen; j++)
+		{
+			if (j == i - 1)
+				x = data[j];
+		}
+	}
+	else
+		cout << "超出范围！" << endl;
+}
+int SeqList::Locate(int x)
+{
+	if (Empty())
+	{
+		return 0;//返回0表示循序表为空
+	}
+	else
+	{
+		for (int j = 0; j < listLen; j++)
+		{
+			if (data[j] == x)
+				return j + 1;
+		}
+		return -1;//返回-1表示不存在这个元素
+	}
+}
+bool SeqList::Insert(int i, char x)
+{
+	if (Full())
+		return false;
+	else if (i >= 1 && i <= MAXLEN)
+	{
+		for (int j = listLen - 1; j >= i - 1; j--)
+			data[j + 1] = data[j];
+		data[i - 1] = x;
+		listLen++;
+		return true;
+	}
+	else
+		return false;
+}
+bool SeqList::Delete(int i)
+{
+	if (Empty())
+		return false;
+	else if (i >= 1 && i <= listLen)
+	{
+		for (int j = i - 1; j < listLen; j++)
+			data[j] = data[j + 1];
+		listLen--;
+		return true;
+	}
+}
+bool exchange(SeqList &X, int i, node* &S)
+{
+	int j = i - 1;
+	if (i > X.listLen)
+		return false;
+	if (X.data[j] == '#')
+		return false;
+	S = new node; S->ichild = NULL; S->rchild = NULL;
+	S->date = X.data[j];
+	exchange(X, 2 * i, S->ichild);
+	exchange(X, 2 * i + 1, S->rchild);
+	return true;
+}
+int main()
+{
+	char x;
+	cout << "请以先序顺序输入你的二叉树 若为空则输入'/'" << endl;
+	BiTree A;
+	cout<<"二叉树先序遍历为:";
+    A.PreOrder(A.root);//先序
+	cout << endl;
+	cout << "二叉树中序遍历为:" ;
+    A.ceng(A.root,1);//中序
+	cout << endl;
+	cout << "二叉树后序遍历为:" ;
+	A.PostOrder(A.root);//后序
+	cout << endl;
+	cout << "二叉树的高度为" << A.heith(A.root) << endl;
+	cout << "二叉树的结点数为" << A.nodenumber(A.root) <<" "<<"叶子节点数为"<<A.leafnumber(A.root)<< endl;
+	cout << "度数为2的结点数为" << A.deg2(A.root)<<endl;
+	cout << "请输入一个元素" << "x=";
+	cin >> x;
+	A.searchfather(A.root, x);
+	
+	if (flag1 == 0)
+	{
+		cout << "无匹配结点" << endl;
+	}
+	if (flag2 == 0)
+		cout << "无父亲结点" << endl;
+    if (flag3 == 0)
+		cout << "无左兄弟结点" << endl;
+	if (flag4 == 0)
+		cout << "无右兄弟结点" << endl;
+	if (flag5 == 0)
+		cout << "无左孩子结点" << endl;
+	if (flag6 == 0)
+		cout << "无右孩子结点" << endl;
+	cout << endl;
+	char s;
+	cout << "请输入要搜索层数的元素:";
+	cin >> s; cout << endl;
+	A.search(A.root,s, 1);
+	cout << "二叉树的左右子树交换后先序遍历为";
+	A.swapLR(A.root);
+	A.PreOrder(A.root);
+	SeqList X; char e; node *S;
+	cout << "现有一顺序表储存二叉树为";
+	X.Insert(1, 'A'); X.Insert(2, 'B'); X.Insert(3, '/'); X.Insert(4, 'C'); X.Insert(5, 'I'); X.Insert(6, '/'); X.Insert(7, '/'); X.Insert(8, 'D'); X.Insert(9, 'F'); X.Insert(10, 'J'); X.Insert(11, '/'); X.Insert(12, '/'); X.Insert(13, '/'); X.Insert(7, '/'); X.Insert(14, '/'); X.Insert(15, '/');
+	X.Insert(16, 'E'); X.Insert(17, 'G'); X.Insert(18, '/'); X.Insert(19, 'K'); X.Insert(20, 'L'); X.Insert(21, '/'); X.Insert(22, '/'); X.Insert(23, '/'); X.Insert(24, '/'); X.Insert(25, '/'); X.Insert(26, '/'); X.Insert(27, '/'); X.Insert(28, '/'); X.Insert(29, '/'); X.Insert(30, '/'); X.Insert(31, '/');
+	X.Insert(32, '/'); X.Insert(33, '/'); X.Insert(34, '/'); X.Insert(35, '/'); X.Insert(36, 'H'); X.Insert(37, '/'); X.Insert(38, '/'); X.Insert(39, 'M'); X.Insert(40, '/'); X.Insert(41, '/'); X.Insert(42, '/');
+	X.Insert(43, '/'); X.Insert(44, '/'); X.Insert(45, '/'); X.Insert(46, '/'); X.Insert(47, '/'); X.Insert(48, '/'); X.Insert(49, '/'); X.Insert(50, '/'); X.Insert(51, '/'); X.Insert(52, '/'); X.Insert(53, '/'); X.Insert(54, '/'); X.Insert(55, '/'); X.Insert(56, '/');
+	for (int i = 1; i <= 56; i++)
+	{
+		X.getElement(i, e);
+		cout << e;
+	}
+	cout << "转化为二叉树为";
+	exchange(X, 1, S);
+	A.root = S;
+	A.PreOrder(A.root);
+	cout << endl;
+
+}
