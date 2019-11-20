@@ -1,0 +1,265 @@
+#include<stdio.h>
+#include<iostream>
+using namespace std;
+typedef struct csnode
+{
+	char date;
+	int num;
+	csnode *firstchild, *nexbrother;
+}csnode,*cstree;
+typedef cstree elemtype;
+class queue
+{
+public:
+	queue();
+	bool empty();
+	bool full();
+	bool getFront(elemtype &x);
+	bool enqueue(elemtype x);
+	bool outqueue();
+	elemtype date[100];
+	int front;//队头
+	int rear;//队尾
+};
+queue::queue()
+{
+	front = 0;
+	rear = 0;
+}
+bool queue::empty()
+{
+	if (front == rear)
+		return 1;
+	else
+		return 0;
+}
+bool queue::full()
+{
+	if ((rear + 1) % 100 == front)
+		return 1;
+	else
+		return 0;
+}
+bool queue::getFront(elemtype &x)
+{
+	if (rear == front)
+		return 0;//队空
+	else
+	{
+		x = date[(front + 1) % 100];//front的下一个才是队头元素,所以+1
+		return 1;
+	}
+}
+bool queue::enqueue(elemtype x)
+{
+	if (full())
+		return 0;
+	else
+	{
+		rear = (rear + 1) % 100;
+		date[rear] = x;
+		return 1;
+	}
+}
+bool queue::outqueue()
+{
+	if (empty())
+		return 0;
+	else
+		front = (front + 1) % 100;
+	return 1;//队头指针后移 元素并未真正删除
+}
+int getnumber(queue A)
+{
+	int n = 0;
+	while (A.front != A.rear)
+	{
+		A.front++;
+		n++;
+	}
+	return n;
+}
+void output(queue A)
+{
+	while (A.front != A.rear)
+	{
+		cout << A.date[A.rear] << endl;
+		A.rear--;
+	}
+
+}
+int num = 0;
+int judge = 0;
+int judgement[] = { 1,1,0,1,0,0,1,1,0,0,1,1,0,1,0,1,0,0,0,1,1,0,1,1,0,0,0,1,1,1,1,1,0,0,0,0,1,0,0,0};
+char numdate[] = { 'A','B','E','F','C','G','D','H','I','J','K','L','M','N','O','P','Q','S','T','R' };
+int leafnum = 0;
+int nodenum = 0;
+int k = 20;
+queue X;
+int deg[20];
+int deg1[20];
+void init(int *deg)
+{
+	for (int i = 0; i < k; i++)
+		deg[i] = 0;
+}
+bool creatnode(cstree &T)
+{
+	T = new csnode;
+	if (T == NULL)
+	{
+		cout << "结点为空操作失败" << endl;
+		return false;
+	}
+		T->date = numdate[num];
+		T->num = num;
+		num++;
+		T->firstchild = NULL;
+		T->nexbrother = NULL;
+		return true;
+}
+void creatsenlin(cstree &T)
+{
+	creatnode(T);
+	if (judgement[judge++])
+	{
+		creatsenlin(T->firstchild);
+	}
+	if (judgement[judge++])
+	{
+		creatsenlin(T->nexbrother);
+	}
+}
+void visit(cstree &T)
+{
+	cstree p = T;
+	cout <<"该结点的数据为"<<p->date<<endl;
+	if (p->nexbrother!=NULL)
+	{
+		cout << "该结点的兄弟结点为" << p->nexbrother->date;
+		p = p->nexbrother;
+		while (p->nexbrother != NULL)
+		{
+			cout << "," << p->nexbrother->date;
+			p = p->nexbrother;
+		}
+
+	}
+	cout << endl;
+	if (T->firstchild != NULL)
+	{
+		deg[T->num]++;
+		cout << "该结点的孩子结点为" << T->firstchild->date;
+		cstree q = T->firstchild; 
+		while (q->nexbrother)
+		{
+			deg[T->num]++;
+			cout << "," << q->nexbrother->date;
+			q = q->nexbrother; 
+		}
+		cout << endl<<endl;
+	}
+}
+void preorder(cstree T)
+{
+	visit(T); nodenum++;
+	if (T->firstchild != NULL)
+		preorder(T->firstchild);
+	else
+		leafnum++;
+	if (T->nexbrother != NULL)
+		preorder(T->nexbrother);
+}
+void preorder1(cstree T)
+{
+	cout << "(" << T->num << "," << T->date << ")" << " ";
+	if (T->firstchild != NULL)
+		preorder1(T->firstchild);
+	if (T->nexbrother != NULL)
+		preorder1(T->nexbrother);
+}
+void inorder(cstree T)
+{
+	
+	if (T->firstchild != NULL)
+		inorder(T->firstchild);
+	visit(T);
+	if (T->nexbrother != NULL)
+		inorder(T->nexbrother);
+}
+void levelvisit(cstree &T)
+{
+	cstree p = T;
+	cstree k;
+	while (p)
+	{
+		k = p;
+		X.enqueue(k);
+		while (!X.empty())
+		{
+			X.getFront(k);
+			X.outqueue();
+			cout << k->date<<" ";
+			if (k->firstchild)
+			{
+				k = k->firstchild;
+				X.enqueue(k);
+				while (k->nexbrother)
+				{
+					k = k->nexbrother;
+					X.enqueue(k);
+				}
+			}
+		}
+		p = p->nexbrother;
+	}
+}
+int max(int a, int b)
+{
+	if (a > b)
+		return a;
+	else
+		return b;
+}
+int heith(cstree T)
+{
+	if (T == NULL)
+		return 0;
+	else
+		return max(heith(T->firstchild), heith(T->nexbrother)) + 1;
+}
+int max(int *deg1)
+{
+	int j=0 ;
+	for(int i=0;i<k;i++)
+		{
+		if (j < deg1[i])
+			j = deg1[i];
+		}
+	return j;
+}
+int main()
+{
+	cstree T;
+	creatsenlin(T);
+	cout << "森林的先序遍历为" << endl;
+	preorder(T);
+	cout << "森林的中序遍历为" << endl;
+	inorder(T);
+	cout << "森林的层次遍历为" << endl;
+	levelvisit(T);
+	cout << "森林的高度为" << heith(T)<<endl;
+	cout << "森林的结点总数为" << nodenum << endl;
+	cout << "森林的叶子结点数为" << leafnum << endl;
+	preorder1(T);
+	cout << endl;
+	cout << "每个结点的度数依次为";
+	for (int j = 0; j < k; j++)
+	{
+		deg1[j] = deg[j] / 3;
+		cout << deg1[j] << " ";
+	}
+	cout << endl;
+	cout << "森林的度为" << max(deg1);
+
+}
