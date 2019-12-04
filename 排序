@@ -1,0 +1,327 @@
+#include<stdio.h>
+#include<iostream>
+using namespace std;
+typedef int elemtype;
+int count1 = 0;//计算比较次数
+int count2 = 0;//计算交换次数
+int count3 = 0;//shell交换
+int count4 = 0;//shell比较
+typedef struct blnode
+{
+	elemtype date;
+	blnode *ichild, *rchild;
+}node;
+bool exchange(node *&T,elemtype A[],int n,int i)
+{
+	int j = i-1;
+	if (i >n)
+		return false;
+	T = new node; T->ichild = NULL; T->rchild = NULL;
+	T->date = A[j];
+	exchange( T->ichild,A,n,2*i);
+	exchange(T->rchild,A,n,2*i+1);
+	return true;
+}
+void PreOrder(node *T)
+{
+	if (T != NULL)
+	{
+		cout << T->date << " ";
+		PreOrder(T->ichild);
+		PreOrder(T->rchild);
+	}
+}
+void Partition(elemtype A[], int low, int high, int &mid)//分区算法
+{
+	int s = A[low];//第一个元素作为中间元素
+	while (low < high)
+	{
+		while (low < high&&A[high] >= s)
+		{
+			high--;
+			count1++;
+	    }
+		count1++;
+		//遇到第一个小于中间元素的值,移动到A[low]
+		A[low] = A[high];//此时A[high]为空
+		count2++;
+		while (low < high&&A[low] <= s)
+		{
+			low++;
+			count1++;
+		}
+		count1++;
+		A[high] = A[low];
+		count2++;
+	}
+	A[low] = s;
+	mid = low;
+}
+void quicksort(elemtype A[], int low, int high)
+{
+	int mid;
+	if (low < high)
+	{
+		Partition(A, low, high, mid);
+		//for (int j = 0; j < 25; j++)//用于查看排序过程
+		//{
+		//	cout << A[j] << " ";
+		//}
+		//cout << endl;
+		quicksort(A, low, mid - 1);
+		quicksort(A, mid + 1, high);
+	}
+}
+void shellsoret(elemtype A[],int n)//page为步长,初始为数组n/2
+{
+	int page = (n / 2); int x; int j;
+	while (page >=1)
+	{
+		for (int i = page+1 ; i <= n; i++)//从右边第一个元素开始
+		{
+			x = A[i];
+			j = i - page;
+			while (j >= 0 && x < A[j])
+			{
+				A[j + page] = A[j];
+				count4++;//交换次数+1
+				j = j - page;
+			}
+			count3++;//比较次数+1
+			A[j + page] = x;
+		}
+		page = page / 2;
+	}
+}
+void exchange()
+{
+	int A3[26] = { 5,6,7, 1,2,3,4,8,9,10,11,12,13, 16,17,18, 14, 25,26,15,19,20,21,22,23,24 }; int date;  int A4[26]; int x = 0;
+	for (int i = 0; i <26; i++)
+		cout << A3[i] << " ";
+	cout << endl;
+		for (int i1 = 0; i1 < 26; i1++)
+		{
+			if (A3[i1] % 3 == 0)
+			{
+				A4[x] = A3[i1];
+				x++;
+			}
+		}
+		for (int i2 = 0; i2 <26; i2++)
+		{
+			if (A3[i2] % 3 == 1)
+			{
+				A4[x] = A3[i2];
+				x++;
+			}
+		}
+		for (int i3 = 0; i3 < 26; i3++)
+		{
+			if (A3[i3] % 3 == 2)
+			{
+				A4[x] = A3[i3];
+				x++;
+			}
+		}
+	cout << "调整后的数组为";
+	for (int u = 0; u < 26; u++)
+		cout << A4[u] << " ";
+	cout << endl;
+}
+void  Merge(elemtype A[], int low, int mid, int high)
+{
+	int i = low, j = mid + 1, p = 0;//对应A数组的下标
+	int * B = new int[high - low + 1];//申请另一个对应大小的数组来存放排好序的数据
+	while (i <= mid && j <= high)
+	{
+		if (A[i] <= A[j])
+		{
+			B[p] = A[i];
+			i++; p++;
+		}
+		if(A[j]<A[i])
+		{
+			B[p] = A[j];
+			p++; j++;
+		}
+	}
+	while (i <= mid)
+	{
+		B[p] = A[i];
+		i++; p++;
+	}
+	while (j <= high)
+	{
+		B[p] = A[j];
+		p++; j++;
+	}
+	for (p = 0, i = low; i <= high; p++, i++)
+		A[i] =B[p];//最后再把有序数据存进a数组中，使得a数组对应部分数据有序
+	delete[]B;
+}
+void MergeSort(int A[], int low, int high)
+ {
+     //二路归并排序，分为二路
+     int mid = (low + high) / 2;
+    //终止条件，low >= high， 不是while，且不含等号，否则死循环
+     if (low < high)
+     {
+        //递归过程，二路归并排序递归过程
+        MergeSort(A, low, mid);
+         MergeSort(A, mid + 1, high);
+        //归并
+         Merge(A, low, mid, high);
+     }
+ }
+void sift(elemtype A[], int k, int m)//k为子树根下标,m为数组最后一个元素下标
+{
+	int x = A[k];
+	bool finished = false;
+	int i = k;
+	int j = 2 * i;
+	while (j < m && !finished)//确定结点不是叶子节点且搜索未结束
+	{
+		if (j < m&&A[j] < A[j + 1])
+			j = j + 1;//总是指向左右孩子中最大的
+		if (x > A[j])
+			finished = true;
+		else
+		{
+			A[i] = A[j];//A[j]上移为根,更新子树根i为j,继续往下调整
+			i = j;
+			j = j * 2;
+		}
+	}
+	A[i] = x;//把最开始根安置
+}
+void heapsort(elemtype A[], int n)
+{
+	for (int i = n / 2; i >=0; i--)
+	{
+		sift(A,i, n);
+		for (int i = 0; i < 25; i++)
+			cout << A[i] << " ";
+		cout << endl;
+
+	}
+}
+
+int main()
+{
+	elemtype A1[100];
+	elemtype A2[] = { 106,213,325,446,579,654,721,870,917,510,21,632,73,14,815,316,412,18,619,720,21,808,923,25,26 };
+	 cout << "快排的数组为:" << endl;
+	for (int i = 0; i < 100; i++)
+	{
+		A1[i] = rand() % (100 - 1);
+		cout << A1[i] << " ";
+		cout << endl;
+	}
+	quicksort(A1,0,99);
+	cout << endl;
+	cout << "快排后次序为" << endl;
+	for (int i = 0; i < 100; i++)
+		cout << A1[i]<<" ";
+	cout << endl;
+	cout <<"数组规模为100"<< "比较次数为" << count1 << " " << "交换次数为" << count2 << endl;
+	cout << "交换次数与规模比为" <<  count2 / 100 << endl;
+	for (int i = 0; i < 100; i++)
+	{
+		A1[i] = rand() % (100 - 1);
+		cout << A1[i] << " ";
+	}
+	quicksort(A1, 0, 99);
+	cout << endl;
+	cout << "快排后次序为" << endl;
+	for (int i = 0; i < 100; i++)
+		cout << A1[i] << " ";
+	cout << endl;
+	cout << "数组规模为100" << "比较次数为" << count1 << " " << "交换次数为" << count2 << endl;
+	cout << "交换次数与规模比为" << count2 / 100 << endl;	for (int i = 0; i < 100; i++)
+	{
+		A1[i] = rand() % (100 - 1);
+		cout << A1[i] << " ";
+	}
+	quicksort(A1, 0, 99);
+	cout << endl;
+	cout << "快排后次序为" << endl;
+	for (int i = 0; i < 100; i++)
+		cout << A1[i] << " ";
+	cout << endl;
+	cout << "数组规模为100" << "比较次数为" << count1 << " " << "交换次数为" << count2 << endl;
+	cout << "交换次数与规模比为" << count2 / 100 << endl;	for (int i = 0; i < 100; i++)
+	{
+		A1[i] = rand() % (100 - 1);
+		cout << A1[i] << " ";
+	}
+	quicksort(A1, 0, 99);
+	cout << endl;
+	cout << "快排后次序为" << endl;
+	for (int i = 0; i < 100; i++)
+		cout << A1[i] << " ";
+	cout << endl;
+	cout << "数组规模为100" << "比较次数为" << count1 << " " << "交换次数为" << count2 << endl;
+	cout << "交换次数与规模比为" << count2 / 100 << endl;	for (int i = 0; i < 100; i++)
+	{
+		A1[i] = rand() % (100 - 1);
+		cout << A1[i] << " ";
+	}
+	quicksort(A1, 0, 99);
+	cout << endl;
+	cout << "快排后次序为" << endl;
+	for (int i = 0; i < 100; i++)
+		cout << A1[i] << " ";
+	cout << endl;
+	cout << "数组规模为100" << "比较次数为" << count1 << " " << "交换次数为" << count2 << endl;
+	cout << "交换次数与规模比为" << count2 / 100 << endl;
+	exchange();
+	int shell[22] = {180,203,32,46,25,76,17,58,99,100,11,102,13,54,75,6,27,18,19,29,2,82 };
+	cout << "原数组为:";
+	for (int i = 0; i < 22; i++)
+		cout << shell[i] << " ";
+	cout << endl;
+	shellsoret(shell,21 );//n=数组元素-1
+	cout << "调整后为:";
+	for (int i = 0; i < 22; i++)
+		cout << shell[i] << " ";
+	cout << endl;
+	cout << "比较次数为" << count3 << " " << "交换次数为" << count4 << endl;
+	for (int i = 0; i < 100; i++)
+{
+	A1[i] = rand() % (100 - 1);
+	cout << A1[i] << " ";
+	cout << endl;
+}
+	cout << "原数组为:";
+	for (int i = 0; i < 100; i++)
+		cout << A1[i] << " ";
+	cout << endl;
+	shellsoret(A1, 99);//n=数组元素-1
+	cout << "调整后为:";
+	for (int i = 0; i < 100; i++)
+		cout << A1[i] << " ";
+	cout << endl;
+	cout << "比较次数为" << count3 << " " << "交换次数为" << count4 << endl;
+	int A[] = { 106,213,325,446,579,654,721,870,917,510,21,632,73,14,815,316,412,18,619,720,21,808,923,25,26 };
+	cout << "原数组为:";
+	for (int i = 0; i <25; i++)
+		cout << A[i] << " ";
+	cout << endl;
+	cout << "二路归并后为:";
+		MergeSort(A, 0, 24);
+		for (int i = 0; i < 25; i++)
+			cout << A[i] << " ";
+		cout << endl;
+	
+		int B[] = { 106,213,325,446,579,654,721,870,917,510,21,632,73,14,815,316,412,18,619,720,21,808,923,25,26 };
+		cout << "原数组为:";
+		for (int i = 0; i < 25; i++)
+			cout << B[i] << " ";
+		cout << endl;
+		heapsort(B, 24);
+		cout << "堆排序后结果为以及层次遍历为:";
+		for (int i = 0; i < 25; i++)
+			cout << B[i] << " ";
+		cout << endl;
+
+}
